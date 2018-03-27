@@ -31,7 +31,29 @@
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
     <transition name="fade">
-      <div v-show="detailShow"></div>
+      <div v-show="detailShow" class="detail" @click="hideDetail">
+        <!-- sticky footer布局 -->
+        <div class="detail-wrapper clearfix">
+          <div class="detail-main">
+            <!-- {{sseller.bulletin}} -->
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+            <p>{{seller.bulletin}}</p>
+          </div>
+        </div>
+        <div class="detail-close" @click="hideDetail">
+          <i class="icon-close"></i>
+        </div>
+      </div>
     </transition>
   </div>
 </template>
@@ -43,8 +65,10 @@
        type: Object
      }
    },
-   created() {
-    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+   data() {
+     return {
+       detailShow: false
+     };
    },
    methods: {
      showDetail: function() {
@@ -53,6 +77,9 @@
      hideDetail: function() {
        this.detailShow = false;
      }
+   },
+   created() {
+    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
    }
  };
 </script>
@@ -169,4 +196,28 @@
       width: 100%
       height: 100%
       filter: blur(10px)
+    .detail
+      position: fixed
+      z-index: 100
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      overflow: auto
+      backdrop-filter: blur(10px) //  弹层背景模糊。IOS时才有效果
+      opacity: 1
+      background: rgba(7,17,27,.8)
+      .detail-wrapper // 弹层的容器层
+        width: 100%
+        min-height: 100%
+        .detail-main
+          margin-top: 64px
+          padding-bottom: 64px
+      .detail-close
+        position: relative
+        width: 32px
+        height: 32px
+        margin: -64px auto 0 auto
+        clear: both
+        font-size: 32px
 </style>

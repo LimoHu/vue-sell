@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="ratings">
     我是ratings!
   </div>
 </template>

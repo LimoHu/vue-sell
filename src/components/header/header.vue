@@ -35,19 +35,10 @@
         <!-- sticky footer布局 -->
         <div class="detail-wrapper clearfix">
           <div class="detail-main">
-            <!-- {{sseller.bulletin}} -->
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
+            <p>{{seller.name}}</p>
+            <div class="star-wrapper">
+            <star :size="32" :score="seller.score"></star>
+          </div>
           </div>
         </div>
         <div class="detail-close" @click="hideDetail">
@@ -59,6 +50,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+import star from '../star/star.vue';
+
  export default {
    props: {
      seller: {
@@ -67,7 +60,7 @@
    },
    data() {
      return {
-       detailShow: false
+       detailShow: true
      };
    },
    methods: {
@@ -80,6 +73,9 @@
    },
    created() {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+   },
+   components: {
+     star: star
    }
  };
 </script>

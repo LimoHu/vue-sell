@@ -1,7 +1,7 @@
 <!-- 评价星星 -->
 <template>
   <div class="star" :class="starType">
-    <span v-for=" (itemClass,index) in itemClasses" :key="index" track-by="index" class="star-item" :class="itemClass" ></span>
+    <span v-for="(itemClass, index) in itemClasses" track-by="index" class="star-item" :class="itemClass" :key="index"></span>
   </div>
 </template>
 
@@ -22,7 +22,6 @@ export default {
   },
   computed: {
     starType: function() { // 动态的返回star大小的样式
-    console.log(this.score);
       return 'star-' + this.size;
     },
     itemClasses () {
@@ -33,20 +32,16 @@ export default {
       let integer = Math.floor(score);
       for (let i = 0; i < integer; i++) {
         result.push(CLS_ON);
-      };
+      }
       if (hasDecimal) {
         result.push(CLS_HALF);
-      };
+      }
       while (result.length < LENGTH) {
         result.push(CLS_OFF);
-      };
+      }
       return result;
     }
-  },
-
-  mounted: {},
-
-  methods: {}
+  }
 };
 
 </script>
@@ -56,47 +51,47 @@ export default {
     font-size: 0
     .star-item
       display: inline-block
-      background-repeat: no-repeat
+      background-repeat no-repeat
     &.star-48
       .star-item
         width: 20px
         height: 20px
-        margin-right: 22px // 总图的宽度减去星星的宽度*星数/星星之间的间距个数
+        margin-right: 22px
         background-size: 20px 20px
         &:last-child
           margin-right: 0
-        &.on // 全星状态
+        &.on
           bg-image('star48_on')
-        &.half // 半星状态
+        &.half
           bg-image('star48_half')
-        &.off // 无星状态
+        &.off
           bg-image('star48_off')
     &.star-36
       .star-item
         width: 15px
         height: 15px
-        margin-right: 6px // 总图的宽度减去星星的宽度*星数/星星之间的间距个数
-        background-size: 15px 15px
+        margin-right: 16px
+        backgroud-size: 15px 15px
         &:last-child
           margin-right: 0
-        &.on // 全星状态
+        &.on
           bg-image('star36_on')
-        &.half // 半星状态
+        &.half
           bg-image('star36_half')
-        &.off // 无星状态
+        &.off
           bg-image('star36_off')
     &.star-24
       .star-item
         width: 10px
         height: 10px
-        margin-right: 3px // 总图的宽度减去星星的宽度*星数/星星之间的间距个数
-        background-size: 10px 10px
+        margin-right: 3px
+        backgroud-size: 10px 10px
         &:last-child
           margin-right: 0
-        &.on // 全星状态
+        &.on
           bg-image('star24_on')
-        &.half // 半星状态
+        &.half
           bg-image('star24_half')
-        &.off // 无星状态
+        &.off
           bg-image('star24_off')
 </style>

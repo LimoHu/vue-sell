@@ -105,6 +105,8 @@ import star from '../star/star.vue';
   .header
     color: #ffffff
     position: relative
+    background: rgba(7,17,27,.5)
+    overflow: hidden
     .content-wrapper
       padding: 24px 12px 18px 24px
       font-size: 0

@@ -2,16 +2,18 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods" :key="index" class="menu-item" :class="{'current':currentIndex===index}">
+        <li v-for="(item, index) in goods" class="menu-item" :key="index" :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
           <span class="text border-1px">
-            <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+            <!--判断类别前面是否有个图标-->
+            <span v-show="item.type > 0" class="icon" :class="classMap[item.type]"></span>
+            {{ item.name }}
           </span>
         </li>
       </ul>
     </div>
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="(item, index) in goods" :key="index" class="foods-list food-list-hook">
+        <li v-for="(item, index) in goods" :key="index" class="foods-list food-list-hook" >
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="(food, index) in item.foods" :key="index" class="food-item border-1px">
@@ -61,8 +63,8 @@
           let height1 = this.listHeight[i]; // 获取当前的上高度
           let height2 = this.listHeight[i + 1]; // 获取当前的下高度
           // if (this.scrollY > height1 && this.scrollY < height2)  这样子height2会超出listHeight的索引，需要加一个条件
-          console.log('y:' + this.scrollY);
-          console.log(height1 + '....' + height2);
+          // console.log('y:' + this.scrollY);
+          // console.log(height1 + '....' + height2);
           if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
             return i; // 返回当前索引
           }
@@ -79,32 +81,46 @@
           this.$nextTick(() => { // 异步更新，当数据加载完之后再去更新dom
             // 调用滚动的初始化方法
             this._initScroll();
-            // this._calculateHeight();
+            this._calculateHeight();
           });
         }
       });
    },
    methods: {
-     _initScroll() {
-       this.menuScroll = new BScorll(this.$refs.menuWrapper, {});
-       this.foodsScroll = new BScorll(this.$refs.foodsWrapper, {
-         probeType: 3
-       });
-       this.foodsScroll.on('scroll', (pos) => {
-         this.scrollY = Math.round(pos.y);
-       });
-     },
-     _calculateHeight() {
-       let foodList = this.$refs.foodsWrapper.getElementsByClassName('foor-list-hook');
-       let height = 0;
-       this.listHeight.push(height);
-       for (let i = 0; i < foodList.length; i++) {
-         let item = foodList[i];
-         height += item.clientHeight;
-         this.listHeight.push(height);
-       }
-     }
-   }
+      // 左侧菜单点击右侧内容滚动到对应区域事件
+      selectMenu(index, event) { // 这里多传递一个事件 ,event 就是click传递的event，当设置 click为 true时，默认就派发了一个点击事件，而pc端本身也有click事件
+        if (!event._constructed) {
+          return; // 原生的浏览器的event没有 vue的这个 _constructed 属性，所以当没有这个时，直接return。避免在pc端点击时事件执行（触发）2次的效果
+        }
+        // console.log(index);
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+        let el = foodList[index]; // 滚动到响应的元素
+        console.log(el);
+        this.foodsScroll.scrollToElement(el, 300);
+      },
+      _initScroll() {
+        this.menuScroll = new BScorll(this.$refs.menuWrapper, {
+          click: true // 一开始的点击事件被bscroll阻止了，设置这个才能点击
+        });
+        this.foodsScroll = new BScorll(this.$refs.foodsWrapper, {
+          click: true,
+          probeType: 3
+        });
+        this.foodsScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
+      },
+      _calculateHeight() {
+        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+        let height = 0;
+        this.listHeight.push(height);
+        for (let i = 0; i < foodList.length; i++) {
+          let item = foodList[i];
+          height += item.clientHeight; // 获取每一个li的可视区域的高度
+          this.listHeight.push(height); // 这样就得到了每一个商品分类下的所有商品对应的高度
+        }
+      }
+    }
  };
 </script>
 

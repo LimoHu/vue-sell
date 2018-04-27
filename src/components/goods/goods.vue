@@ -36,11 +36,14 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
  import BScorll from 'better-scroll';
+ import shopcart from 'components/shopcart/shopcart'; // 导入购物车组件
+
  const ERR_OK = 0;
 
  export default {
@@ -120,8 +123,11 @@
           this.listHeight.push(height); // 这样就得到了每一个商品分类下的所有商品对应的高度
         }
       }
-    }
- };
+    },
+    components: {
+      shopcart: shopcart
+   }
+  };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

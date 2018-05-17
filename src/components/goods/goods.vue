@@ -30,19 +30,23 @@
                   <span class="now">¥{{food.price}}</span>
                   <span class="old" v-show="food.oldPrice">¥{{food.oldPrice}}</span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol @add="addFood" :food="food"></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+    <shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" ref="shopcart"></shopcart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
  import BScorll from 'better-scroll';
  import shopcart from 'components/shopcart/shopcart'; // 导入购物车组件
+ import cartcontrol from 'components/cartcontrol/cartcontrol'; // 导入购物车组件
 
  const ERR_OK = 0;
 
@@ -60,20 +64,29 @@
      };
    },
    computed: {
-     currentIndex() { // 计算当前右侧的距离，决定决定左侧哪一个分类高亮（选中的意思）
+      currentIndex() { // 计算当前右侧的距离，决定决定左侧哪一个分类高亮（选中的意思）
         for (let i = 0; i < this.listHeight.length; i++) {
           // 这两个高度就是一个li从上到下整个的高度
           let height1 = this.listHeight[i]; // 获取当前的上高度
           let height2 = this.listHeight[i + 1]; // 获取当前的下高度
           // if (this.scrollY > height1 && this.scrollY < height2)  这样子height2会超出listHeight的索引，需要加一个条件
-          // console.log('y:' + this.scrollY);
-          // console.log(height1 + '....' + height2);
           if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
             return i; // 返回当前索引
           }
         }
         return 0; // 如果什么的都没有就返回 0
-      }
+      },
+    selectFoods() {
+      let foods = [];
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            foods.push(food);
+          }
+        });
+      });
+      return foods;
+    }
    },
    created() {
      this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
@@ -95,10 +108,8 @@
         if (!event._constructed) {
           return; // 原生的浏览器的event没有 vue的这个 _constructed 属性，所以当没有这个时，直接return。避免在pc端点击时事件执行（触发）2次的效果
         }
-        // console.log(index);
         let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
         let el = foodList[index]; // 滚动到响应的元素
-        console.log(el);
         this.foodsScroll.scrollToElement(el, 300);
       },
       _initScroll() {
@@ -122,11 +133,22 @@
           height += item.clientHeight; // 获取每一个li的可视区域的高度
           this.listHeight.push(height); // 这样就得到了每一个商品分类下的所有商品对应的高度
         }
+      },
+      _drop: function (target) { // 处理小球动画的方法
+        // 体验优化，异步执行下落动画
+        // 使用这个接口缓解抛物线小球动画立即执行导致和减按钮两个动画同时执行的卡顿
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target); // 访问子组件的方法
+        });
+      },
+      addFood(target) {
+        this._drop(target);
       }
     },
     components: {
-      shopcart: shopcart
-   }
+      shopcart: shopcart,
+      cartcontrol: cartcontrol
+    }
   };
 </script>
 
@@ -194,7 +216,8 @@
       .food-item
         display: flex
         margin: 18px
-        border-1px(rgba(7,17,27,0.1))
+        padding-bottom: 18px
+        border-1px: (rgba(7, 17, 27, .1))
         &:last-child
           border-none()
           margin-bottom: 0
@@ -230,4 +253,8 @@
               text-decoration: line-through
               font-size: 10px
               color: rgb(147,153,159)
+          .cartcontrol-wrapper
+            position absolute
+            right 0
+            bottom 12px
 </style>
